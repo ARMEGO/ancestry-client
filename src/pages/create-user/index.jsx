@@ -1,5 +1,5 @@
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { styled } from "styled-components";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -30,7 +30,6 @@ const ButtonContainer = styled.div`
 `;
 
 const emptyUser = {
-    image: null,
     username: '',
     firstName: '',
     lastName: '',
@@ -61,7 +60,6 @@ function CreateUser() {
     const common = useSelector(state => state.common);
     const { login } = useAuth();
 
-    const toast = useRef(null);
     const dispatch = useDispatch();
 
     const handleUser = (obj) => {
@@ -75,9 +73,11 @@ function CreateUser() {
     const handleUsernameCheck = async () => {
         // call API to check username
         const response = await axios.post(BASE_URL + "username-exists", { username: user.username });
+        console.log(response);
         if (response.status === 200) {
-            dispatch(setAuthUser({ username: user.username, token: null }));
-            setUsernameExists(response.data.status);
+            const status = response.data.status;
+            setUsernameExists(status);
+            if (status) dispatch(setAuthUser({ username: user.username, token: null }));
         }
     }
 
